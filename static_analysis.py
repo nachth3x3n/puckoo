@@ -3,21 +3,18 @@ import os
 import hashlib
 import magic
 import string
+import re
 BLOCKSIZE = 65536
+
 
 class FileAnalysis:
     def __init__(self, file_path):
-
         self.file_path = file_path
         self.sha256 = self.calc_hash("sha256")
         self.sha256 = self.calc_hash("md5")
         self.sha256 = self.calc_hash("sha1")
-        # self.sha256 = self.calc_sha256(file_path)
-        # self.md5 = self.calc_md5(file_path)
-        # self.sha1 = self.calc_sha1(file_path)
         self.file_type = self.get_file_type()
         self.size = self.get_file_size()
-        # self.sha256 = sha256
 
     def get_file_type(self):
         filetype = magic.from_file(self.file_path, mime=True)
@@ -92,5 +89,27 @@ class FileAnalysis:
             if len(result) >= min:  # catch result at EOF
                 yield result
 
+    def find_urls(self, strings):
+        """
+        Searches the binary strings for urls
+        :param strings: A list of strings extracted from the binary file
+        :return: Returns a list of urls that were found in the strings
+        """
+        urls = []
+        for f_string in strings:
+            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', f_string)
+        return urls
 
+    def find_cnc(self, strings):
+        """
+        searches in the most stupid way for cnc commands
+        :param strings: A list of strings extracted from the binary file
+        :return: returns a list of cnc related calls that were found (if any)
+        """
+        cnc_calls = []
+        for a_string in strings:
+            if "rcv" or "send" or "exec" in a_string:
+                # TODO: work on it to be less dumb + return the contect and not the whole string
+                cnc_calls.append(a_string)
+        return cnc_calls
 
