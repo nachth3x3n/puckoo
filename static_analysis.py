@@ -17,7 +17,6 @@ class FileAnalysis:
         # self.sha1 = self.calc_sha1(file_path)
         self.file_type = self.get_file_type()
         self.size = self.get_file_size()
-        # self.size = size
         # self.extension = extension
         # self.sha256 = sha256
 
