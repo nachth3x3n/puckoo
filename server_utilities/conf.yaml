@@ -1,0 +1,11 @@
+[puckoo]
+ip=
+port =
+
+[guest_machines]
+ip =
+name =
+
+[db]
+ip =
+port =
